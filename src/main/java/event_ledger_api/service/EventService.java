@@ -1,20 +1,20 @@
 package event_ledger_api.service;
 
-import event_ledger_api.entity.Event;
-import org.springframework.stereotype.Service;
+import event_ledger_api.dto.EventDto;
+import event_ledger_api.dto.EventResponse;
+import event_ledger_api.dto.EventSaveResult;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Service
 public interface EventService {
 
-    Event saveEvent(Event event);
+    EventSaveResult saveEvent(EventDto event);
 
-    Event fetchEventById(String eventId);
+    EventResponse fetchEventById(String eventId);
 
-    List<Event> fetchEventsWithAccountId(String accountId);
+    List<EventResponse> fetchEventsWithAccountId(String accountId);
 
-    BigDecimal fetchBalanceForAccountId();
+    BigDecimal fetchBalanceForAccountId(String accountId);
 
 }
