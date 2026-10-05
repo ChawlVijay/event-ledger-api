@@ -6,11 +6,14 @@ import event_ledger_api.dto.EventSaveResult;
 import event_ledger_api.entity.Event;
 import event_ledger_api.repo.EventRepo;
 import event_ledger_api.service.EventService;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -22,12 +25,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventSaveResult saveEvent(EventDto dto) {
 
         Event existingEvent = eventRepo.findById(dto.getEventId()).orElse(null);
-
         if (existingEvent != null) {
-            return new EventSaveResult(mapToResponse(existingEvent),true);
+            return new EventSaveResult(mapToResponse(existingEvent), true);
         }
 
         Event event = new Event();
@@ -39,9 +42,15 @@ public class EventServiceImpl implements EventService {
         event.setEventTimestamp(dto.getEventTimestamp());
         event.setMetadata(dto.getMetadata());
 
-        Event saved = eventRepo.save(event);
-
-        return new EventSaveResult(mapToResponse(saved),false);
+        // Handling concurrency
+        try {
+            Event saved = eventRepo.save(event);
+            return new EventSaveResult(mapToResponse(saved), false);
+        } catch (DataIntegrityViolationException ex) {
+            Event raceWinner = eventRepo.findById(dto.getEventId())
+                    .orElseThrow(() -> ex);
+            return new EventSaveResult(mapToResponse(raceWinner), true);
+        }
     }
 
     public EventResponse mapToResponse(Event event)
@@ -66,10 +75,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventResponse> fetchEventsWithAccountId(String accountId) {
-        List<Event> eventResponseList = eventRepo.findByAccountIdOrderByEventTimestampAsc(accountId);
-        return eventResponseList.stream().map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<EventResponse> fetchEventsByAccount(String accountId, Pageable pageable) {
+
+        return eventRepo.findByAccountIdOrderByEventTimestampAsc(accountId, pageable).map(this::mapToResponse);
     }
 
     @Override
@@ -89,8 +97,6 @@ public class EventServiceImpl implements EventService {
                 balance = balance.subtract(event.getAmount());
             }
         }
-
         return balance;
-
     }
 }

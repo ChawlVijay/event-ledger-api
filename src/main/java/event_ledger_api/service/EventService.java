@@ -3,9 +3,10 @@ package event_ledger_api.service;
 import event_ledger_api.dto.EventDto;
 import event_ledger_api.dto.EventResponse;
 import event_ledger_api.dto.EventSaveResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public interface EventService {
 
@@ -13,7 +14,7 @@ public interface EventService {
 
     EventResponse fetchEventById(String eventId);
 
-    List<EventResponse> fetchEventsWithAccountId(String accountId);
+    Page<EventResponse> fetchEventsByAccount(String accountId, Pageable pageable);
 
     BigDecimal fetchBalanceForAccountId(String accountId);
 
