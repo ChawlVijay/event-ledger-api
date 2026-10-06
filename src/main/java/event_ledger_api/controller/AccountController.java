@@ -1,7 +1,6 @@
 package event_ledger_api.controller;
 
 import event_ledger_api.service.EventService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +21,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/balance")
-    public ResponseEntity<BigDecimal> getAccountBalance(@Valid
+    public ResponseEntity<BigDecimal> getAccountBalance(
             @PathVariable String accountId) {
 
         BigDecimal balance = eventService.fetchBalanceForAccountId(accountId);

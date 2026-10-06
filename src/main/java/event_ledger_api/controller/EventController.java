@@ -35,17 +35,17 @@ public class EventController {
         return new ResponseEntity<>(resultEvent.getEvent(), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{eventId}")
     public ResponseEntity<EventResponse> fetchEventById(@Valid @PathVariable String eventId) {
 
         return new ResponseEntity<>(eventService.fetchEventById(eventId),HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponse>> fetchEventsWithAccountId(@Valid @RequestParam String accountId,
-                                                                        @PageableDefault(size = 10) Pageable pageable)
-    {
-        return new ResponseEntity<>(eventService.fetchEventsByAccount(accountId, pageable),HttpStatus.OK);
+    public ResponseEntity<Page<EventResponse>> fetchEventsWithAccountId(
+            @RequestParam String account, @PageableDefault(size = 10) Pageable pageable) {
+
+        return ResponseEntity.ok(eventService.fetchEventsByAccount(account, pageable));
     }
 
 }

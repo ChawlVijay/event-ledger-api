@@ -4,6 +4,7 @@ import event_ledger_api.dto.EventDto;
 import event_ledger_api.dto.EventResponse;
 import event_ledger_api.dto.EventSaveResult;
 import event_ledger_api.entity.Event;
+import event_ledger_api.exception.ResourceNotFoundException;
 import event_ledger_api.repo.EventRepo;
 import event_ledger_api.service.EventService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -67,10 +68,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventResponse fetchEventById(String eventId) {
-
         Event event = eventRepo.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found with id: " + eventId));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
         return mapToResponse(event);
     }
 

@@ -1,5 +1,8 @@
 package event_ledger_api.dto;
 
+import lombok.Data;
+
+@Data
 public class EventSaveResult {
 
     private final EventResponse event;
@@ -10,11 +13,4 @@ public class EventSaveResult {
         this.duplicate = duplicate;
     }
 
-    public EventResponse getEvent() {
-        return event;
-    }
-
-    public boolean isDuplicate() {
-        return duplicate;
-    }
 }
