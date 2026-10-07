@@ -1,5 +1,6 @@
 package event_ledger_api.controller;
 
+import event_ledger_api.dto.BalanceResponse;
 import event_ledger_api.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,10 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/balance")
-    public ResponseEntity<BigDecimal> getAccountBalance(
+    public ResponseEntity<BalanceResponse> getAccountBalance(
             @PathVariable String accountId) {
 
         BigDecimal balance = eventService.fetchBalanceForAccountId(accountId);
-        return new ResponseEntity<>(balance, HttpStatus.OK);
+        return new ResponseEntity<>(new BalanceResponse(accountId,balance), HttpStatus.OK);
     }
 }

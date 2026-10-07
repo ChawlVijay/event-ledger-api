@@ -3,11 +3,10 @@ package event_ledger_api.controller;
 import event_ledger_api.dto.EventDto;
 import event_ledger_api.dto.EventResponse;
 import event_ledger_api.dto.EventSaveResult;
+import event_ledger_api.dto.PagedResponse;
 import event_ledger_api.service.EventService;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +41,14 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponse>> fetchEventsWithAccountId(
-            @RequestParam String account, @PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<PagedResponse<EventResponse>> fetchEventsWithAccountId(
+            @RequestParam("account") String account,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(eventService.fetchEventsByAccount(account, pageable));
+        PageRequest pageRequest = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100));
+        return ResponseEntity.ok(
+                PagedResponse.from(eventService.fetchEventsByAccount(account, pageRequest)));
     }
 
 }

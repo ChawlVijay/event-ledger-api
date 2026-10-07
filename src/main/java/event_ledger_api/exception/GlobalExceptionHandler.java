@@ -23,8 +23,7 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "Validation failed",
-                details);
+                "Validation failed");
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
@@ -35,8 +34,7 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
-                ex.getMessage(),
-                List.of());
+                ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
